@@ -25,6 +25,7 @@
   *, *::before, *::after { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
+    zoom: 0.9;
     margin: 0;
     background: var(--paper);
     color: var(--ink);
@@ -42,7 +43,7 @@
     border-radius: 2px;
   }
 
-  .wrap { width: min(1120px, 100% - 2.5rem); margin-inline: auto; }
+  .wrap { width: min(70rem, 100% - 2.5rem); margin-inline: auto; }
   .section { padding-block: clamp(3.5rem, 8vw, 6.5rem); }
   .section + .section { border-top: 1px solid var(--rule); }
   .lede { max-width: 60ch; color: var(--slate); }
@@ -60,7 +61,7 @@
     justify-content: space-between; gap: .75rem 2rem;
   }
   .brand { display: inline-block; line-height: 0; }
-  .brand img { height: 36px; width: auto; display: block; }
+  .brand img { height: 2.25rem; width: auto; display: block; }
   .site-nav { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; font-size: .975rem; }
   .site-nav a { color: var(--slate); text-decoration: none; padding: .25rem 0; }
   .site-nav a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
@@ -120,7 +121,7 @@
 
   /* about */
   .facts { margin: 0; }
-  .about-facts { margin-top: 2.5rem; max-width: 680px; }
+  .about-facts { margin-top: 2.5rem; max-width: 42.5rem; }
   .facts div { padding-block: .85rem; border-top: 1px solid var(--rule); display: grid; grid-template-columns: 8.5rem 1fr; gap: 1rem; }
   .facts div:last-child { border-bottom: 1px solid var(--rule); }
   .facts dt { color: var(--slate); font-size: .95rem; }
