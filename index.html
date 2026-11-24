@@ -1,999 +1,434 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-AU">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cognit Data | Data Engineering & Insights</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Karla:wght@400;500;600&display=swap" rel="stylesheet" />
-  <style>
-    /* ── Reset & Base ── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: 'Karla', sans-serif;
-      font-size: 18px;
-      line-height: 1.6;
-      color: #191B1D;
-      background: #ffffff;
-    }
-    h1, h2, h3, h4 { font-family: 'Sora', sans-serif; line-height: 1.2; }
-    a { text-decoration: none; color: inherit; }
-    img { max-width: 100%; display: block; }
-    ul { list-style: none; }
-
-    /* ── Layout ── */
-    .container {
-      max-width: 1430px;
-      margin: 0 auto;
-      padding: 0 48px;
-    }
-    section { padding: 120px 0; }
-
-    /* ── Navigation ── */
-    #navbar {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: #ffffff;
-      border-bottom: 1px solid #E8E8EA;
-      transition: box-shadow 0.3s;
-    }
-    #navbar.scrolled { box-shadow: 0 2px 16px rgba(0,0,0,0.08); }
-    .nav-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 72px;
-    }
-    .nav-logo {
-      font-family: 'Sora', sans-serif;
-      font-size: 22px;
-      font-weight: 700;
-      color: #191B1D;
-    }
-    .nav-logo span { color: #C63031; }
-    .nav-links {
-      display: flex;
-      gap: 36px;
-      align-items: center;
-    }
-    .nav-links a {
-      font-size: 16px;
-      font-weight: 500;
-      color: #191B1D;
-      transition: color 0.2s;
-    }
-    .nav-links a:hover { color: #C63031; }
-    .btn {
-      display: inline-block;
-      padding: 14px 28px;
-      font-family: 'Karla', sans-serif;
-      font-size: 16px;
-      font-weight: 600;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background 0.3s, color 0.3s;
-      border: none;
-    }
-    .btn-primary {
-      background: #C63031;
-      color: #ffffff;
-    }
-    .btn-primary:hover { background: #a82728; }
-    .btn-outline {
-      background: transparent;
-      color: #191B1D;
-      border: 2px solid #191B1D;
-    }
-    .btn-outline:hover { background: #191B1D; color: #ffffff; }
-    .nav-hamburger {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
-      background: none;
-      border: none;
-      padding: 4px;
-    }
-    .nav-hamburger span {
-      display: block;
-      width: 24px;
-      height: 2px;
-      background: #191B1D;
-      transition: 0.3s;
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cognit Data | Data engineering for NSW organisations</title>
+<meta name="description" content="Cognit Data is a Sydney data engineering consultancy. We build data platforms and reporting on Azure Databricks for government, councils and growing businesses, and set up private AI on hardware you own.">
+<link rel="icon" type="image/png" href="data:image/png;base64,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">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F1F3F1;
+    --surface: #FFFFFF;
+    --ink: #344454;
+    --slate: #52626F;
+    --rule: #C7D0D2;
+    --accent: #126849;
+    --accent-dark: #0D4F37;
+          --display: "Archivo", "Segoe UI", system-ui, sans-serif;
+    --body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
     }
 
-    /* ── Hero ── */
-    #hero {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      background: #ffffff;
-      padding: 80px 0 120px;
-      position: relative;
-      overflow: hidden;
-    }
-    #hero::before {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      width: 60%;
-      height: 80%;
-      background: radial-gradient(ellipse at bottom right, #F5F5F7 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .hero-content { position: relative; z-index: 1; }
-    .hero-tag {
-      display: inline-block;
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: #1B9288;
-      margin-bottom: 24px;
-    }
-    .hero-title {
-      font-size: 80px;
-      font-weight: 700;
-      color: #191B1D;
-      max-width: 900px;
-      margin-bottom: 32px;
-    }
-    .hero-title em {
-      font-style: normal;
-      color: #C63031;
-    }
-    .hero-desc {
-      max-width: 480px;
-      font-size: 20px;
-      color: #555;
-      margin-bottom: 48px;
-      line-height: 1.65;
-    }
-    .hero-actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
-    .hero-link {
-      font-size: 16px;
-      font-weight: 600;
-      color: #191B1D;
-      border-bottom: 2px solid #C63031;
-      padding-bottom: 2px;
-      transition: color 0.2s;
-    }
-    .hero-link:hover { color: #C63031; }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 1.125rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { font-family: var(--display); margin: 0; letter-spacing: -0.02em; }
+  p { margin: 0; }
+  a { color: var(--accent); }
+  a:focus-visible, button:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
 
-    /* ── Stats Bar ── */
-    #stats {
-      padding: 64px 0;
-      background: #F5F5F7;
-    }
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1px;
-      background: #D8D8DA;
-    }
-    .stat-item {
-      background: #F5F5F7;
-      padding: 40px 32px;
-      text-align: center;
-    }
-    .stat-number {
-      font-family: 'Sora', sans-serif;
-      font-size: 56px;
-      font-weight: 700;
-      color: #191B1D;
-      line-height: 1;
-      margin-bottom: 8px;
-    }
-    .stat-number span { color: #C63031; }
-    .stat-label {
-      font-size: 16px;
-      color: #777;
-      font-weight: 500;
-    }
+  .wrap { width: min(1120px, 100% - 2.5rem); margin-inline: auto; }
+  .section { padding-block: clamp(3.5rem, 8vw, 6.5rem); }
+  .section + .section { border-top: 1px solid var(--rule); }
+  .lede { max-width: 60ch; color: var(--slate); }
 
-    /* ── Section Labels ── */
-    .section-tag {
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: #1B9288;
-      margin-bottom: 16px;
-    }
-    .section-title {
-      font-size: 48px;
-      font-weight: 700;
-      color: #191B1D;
-      max-width: 640px;
-      margin-bottom: 24px;
-      line-height: 1.15;
-    }
-    .section-desc {
-      font-size: 18px;
-      color: #666;
-      max-width: 560px;
-      line-height: 1.7;
-      margin-bottom: 56px;
-    }
+  .skip {
+    position: absolute; left: -999px; top: 0;
+    background: var(--ink); color: var(--paper); padding: .6rem 1rem; z-index: 10;
+  }
+  .skip:focus { left: 0; }
 
-    /* ── Services Accordion ── */
-    #services { background: #ffffff; }
-    .services-layout {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 80px;
-      align-items: start;
-    }
-    .services-left { position: sticky; top: 100px; }
-    .accordion { border-top: 1px solid #C4C4C4; }
-    .accordion-item { border-bottom: 1px solid #C4C4C4; }
-    .accordion-btn {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 28px 0;
-      background: none;
-      border: none;
-      cursor: pointer;
-      text-align: left;
-      gap: 16px;
-    }
-    .accordion-btn:hover .accordion-title { color: #C63031; }
-    .accordion-title {
-      font-family: 'Sora', sans-serif;
-      font-size: 22px;
-      font-weight: 600;
-      color: #191B1D;
-      transition: color 0.2s;
-    }
-    .accordion-icon {
-      width: 28px;
-      height: 28px;
-      flex-shrink: 0;
-      border-radius: 50%;
-      border: 2px solid #C4C4C4;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.3s, border-color 0.3s;
-    }
-    .accordion-icon::before {
-      content: '+';
-      font-size: 18px;
-      font-weight: 300;
-      color: #999;
-      line-height: 1;
-      transition: transform 0.3s, color 0.3s;
-    }
-    .accordion-item.open .accordion-icon {
-      background: #C63031;
-      border-color: #C63031;
-    }
-    .accordion-item.open .accordion-icon::before {
-      content: '−';
-      color: #fff;
-    }
-    .accordion-body {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.4s ease;
-    }
-    .accordion-body-inner {
-      padding: 0 0 28px;
-      font-size: 17px;
-      color: #555;
-      line-height: 1.75;
-    }
-    .accordion-body-inner a {
-      display: inline-block;
-      margin-top: 16px;
-      font-weight: 600;
-      font-size: 15px;
-      color: #1B9288;
-      border-bottom: 1px solid #1B9288;
-      padding-bottom: 1px;
-      transition: color 0.2s;
-    }
-    .accordion-body-inner a:hover { color: #C63031; border-color: #C63031; }
+  /* header */
+  .site-header { padding-block: 1.25rem; }
+  .site-header .wrap {
+    display: flex; flex-wrap: wrap; align-items: center;
+    justify-content: space-between; gap: .75rem 2rem;
+  }
+  .brand { display: inline-block; line-height: 0; }
+  .brand img { height: 36px; width: auto; display: block; }
+  .site-nav { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; font-size: .975rem; }
+  .site-nav a { color: var(--slate); text-decoration: none; padding: .25rem 0; }
+  .site-nav a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
 
-    /* ── Why Us / Cards ── */
-    #why { background: #F5F5F7; }
-    .cards-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-    }
-    .card {
-      background: #ffffff;
-      border-radius: 8px;
-      padding: 40px 36px;
-      transition: box-shadow 0.3s, transform 0.3s;
-    }
-    .card:hover {
-      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-      transform: translateY(-4px);
-    }
-    .card-icon {
-      width: 48px;
-      height: 48px;
-      background: #F5F5F7;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
-    .card-icon svg { width: 24px; height: 24px; }
-    .card-title {
-      font-family: 'Sora', sans-serif;
-      font-size: 20px;
-      font-weight: 600;
-      color: #191B1D;
-      margin-bottom: 12px;
-    }
-    .card-desc { font-size: 16px; color: #666; line-height: 1.7; }
+  /* buttons */
+  .btn {
+    display: inline-block; font: 600 1rem/1 var(--body);
+    padding: .95rem 1.4rem; border-radius: 4px; border: 2px solid var(--accent);
+    background: var(--accent); color: #fff; text-decoration: none; cursor: pointer;
+  }
+  .btn:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+  .btn.quiet { background: transparent; color: var(--accent); }
+  .btn.quiet:hover { background: rgba(18, 104, 73, .08); }
 
-    /* ── Process ── */
-    #process { background: #ffffff; }
-    .process-steps {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 40px;
-      margin-top: 64px;
-    }
-    .step { position: relative; }
-    .step-num {
-      font-family: 'Sora', sans-serif;
-      font-size: 64px;
-      font-weight: 700;
-      color: #F0F0F2;
-      line-height: 1;
-      margin-bottom: 16px;
-    }
-    .step-title {
-      font-family: 'Sora', sans-serif;
-      font-size: 20px;
-      font-weight: 600;
-      color: #191B1D;
-      margin-bottom: 12px;
-    }
-    .step-desc { font-size: 16px; color: #666; line-height: 1.7; }
-    .step::after {
-      content: '→';
-      position: absolute;
-      top: 16px;
-      right: -24px;
-      font-size: 24px;
-      color: #C4C4C4;
-    }
-    .step:last-child::after { display: none; }
+  /* hero */
+  .hero { padding-block: clamp(3rem, 8vw, 6.5rem) clamp(3.5rem, 8vw, 7rem); }
+  .hero h1 {
+    font-size: clamp(2.5rem, 6.6vw, 5rem);
+    line-height: 1.03; font-weight: 800; max-width: 17ch;
+  }
+  .hero .lede { margin-top: 1.75rem; font-size: 1.3rem; max-width: 58ch; color: var(--ink); }
+  .cta-row { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 2rem; }
 
-    /* ── Technologies ── */
-    #tech { background: #F5F5F7; }
-    .tech-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      margin-bottom: 64px;
-      gap: 40px;
-    }
-    .tech-pills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-    .tech-pill {
-      padding: 10px 22px;
-      border-radius: 40px;
-      border: 1.5px solid #D0D0D2;
-      font-size: 15px;
-      font-weight: 500;
-      color: #444;
-      background: #ffffff;
-      transition: border-color 0.2s, color 0.2s;
-    }
-    .tech-pill:hover { border-color: #C63031; color: #C63031; }
-    .tech-pill.highlight { border-color: #1B9288; color: #1B9288; }
+  /* services */
+  h2.title { font-size: clamp(1.75rem, 3.4vw, 2.45rem); font-weight: 700; line-height: 1.1; max-width: 22ch; }
+  .rows { margin: 2.5rem 0 0; padding: 0; }
+  .row { display: grid; gap: .5rem 3rem; padding-block: 1.6rem; border-top: 1px solid var(--rule); }
+  .row:last-child { border-bottom: 1px solid var(--rule); }
+  @media (min-width: 820px) { .row { grid-template-columns: 4fr 7fr; } }
+  .row dt { font-family: var(--display); font-size: 1.35rem; font-weight: 700; letter-spacing: -0.015em; line-height: 1.2; }
+  .row dd { margin: 0; max-width: 60ch; color: var(--slate); }
 
-    /* ── FAQ ── */
-    #faq { background: #ffffff; }
-    .faq-layout {
-      display: grid;
-      grid-template-columns: 1fr 2fr;
-      gap: 80px;
-      align-items: start;
-    }
-    .faq-left { position: sticky; top: 100px; }
+  /* audiences */
+  .audiences { display: grid; gap: 2rem; margin-top: 2.5rem; }
+  @media (min-width: 820px) {
+    .audiences { grid-template-columns: repeat(3, 1fr); gap: 0; }
+    .audience { padding-inline: 2rem; border-left: 1px solid var(--rule); }
+    .audience:first-child { padding-left: 0; border-left: 0; }
+  }
+  .audience h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: .5rem; }
+  .audience p { color: var(--slate); }
 
-    /* ── Contact CTA ── */
-    #cta {
-      background: #191B1D;
-      padding: 100px 0;
-      text-align: center;
-    }
-    .cta-title {
-      font-family: 'Sora', sans-serif;
-      font-size: 56px;
-      font-weight: 700;
-      color: #ffffff;
-      max-width: 720px;
-      margin: 0 auto 24px;
-      line-height: 1.15;
-    }
-    .cta-desc {
-      font-size: 18px;
-      color: #999;
-      max-width: 480px;
-      margin: 0 auto 48px;
-      line-height: 1.7;
-    }
-    .cta-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-    .btn-white {
-      background: #ffffff;
-      color: #191B1D;
-    }
-    .btn-white:hover { background: #F5F5F7; }
+  /* process */
+  .steps { list-style: none; margin: 2.5rem 0 0; padding: 0; display: grid; gap: 0; counter-reset: step; }
+  .steps li {
+    counter-increment: step; display: grid; gap: .35rem 2rem;
+    padding-block: 1.5rem; border-top: 1px solid var(--rule);
+  }
+  .steps li:last-child { border-bottom: 1px solid var(--rule); }
+  @media (min-width: 820px) { .steps li { grid-template-columns: 4rem 4fr 7fr; } }
+  .steps li::before {
+    content: counter(step); font-family: var(--display); font-weight: 700;
+    font-size: 2rem; line-height: 1; color: var(--accent);
+  }
+  .steps h3 { font-size: 1.25rem; font-weight: 700; }
+  .steps p { color: var(--slate); max-width: 58ch; }
 
-    /* ── Footer ── */
-    #footer {
-      background: #FBFBFD;
-      border-top: 1px solid #E8E8EA;
-      padding: 80px 0 40px;
-    }
-    .footer-top {
-      display: grid;
-      grid-template-columns: 280px 1fr 1fr 1fr;
-      gap: 48px;
-      padding-bottom: 64px;
-      border-bottom: 1px solid #E8E8EA;
-      margin-bottom: 40px;
-    }
-    .footer-brand-name {
-      font-family: 'Sora', sans-serif;
-      font-size: 22px;
-      font-weight: 700;
-      color: #191B1D;
-      margin-bottom: 16px;
-    }
-    .footer-brand-name span { color: #C63031; }
-    .footer-brand-desc { font-size: 15px; color: #777; line-height: 1.7; margin-bottom: 24px; }
-    .footer-col-title {
-      font-family: 'Sora', sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: #191B1D;
-      margin-bottom: 20px;
-    }
-    .footer-links { display: flex; flex-direction: column; gap: 12px; }
-    .footer-links a { font-size: 15px; color: #666; transition: color 0.2s; }
-    .footer-links a:hover { color: #C63031; }
-    .footer-bottom {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 24px;
-      flex-wrap: wrap;
-    }
-    .footer-copy { font-size: 14px; color: #999; }
-    .footer-legal { display: flex; gap: 24px; }
-    .footer-legal a { font-size: 14px; color: #999; transition: color 0.2s; }
-    .footer-legal a:hover { color: #C63031; }
+  /* about */
+  .facts { margin: 0; }
+  .about-facts { margin-top: 2.5rem; max-width: 680px; }
+  .facts div { padding-block: .85rem; border-top: 1px solid var(--rule); display: grid; grid-template-columns: 8.5rem 1fr; gap: 1rem; }
+  .facts div:last-child { border-bottom: 1px solid var(--rule); }
+  .facts dt { color: var(--slate); font-size: .95rem; }
+  .facts dd { margin: 0; }
 
-    /* ── Responsive ── */
-    @media (max-width: 1279px) {
-      .hero-title { font-size: 60px; }
-      .section-title { font-size: 40px; }
-      .cta-title { font-size: 44px; }
-      .services-layout { grid-template-columns: 1fr; gap: 48px; }
-      .services-left { position: static; }
-      .faq-layout { grid-template-columns: 1fr; gap: 40px; }
-      .faq-left { position: static; }
-      .footer-top { grid-template-columns: 1fr 1fr; }
-      .process-steps { grid-template-columns: repeat(2, 1fr); }
-      .step::after { display: none; }
-    }
-    @media (max-width: 767px) {
-      .container { padding: 0 24px; }
-      section { padding: 60px 0; }
-      .nav-links { display: none; flex-direction: column; position: absolute; top: 72px; left: 0; right: 0; background: #fff; border-bottom: 1px solid #E8E8EA; padding: 24px; gap: 20px; }
-      .nav-links.open { display: flex; }
-      .nav-hamburger { display: flex; }
-      .hero-title { font-size: 40px; }
-      .hero-desc { font-size: 17px; }
-      .stat-number { font-size: 40px; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .section-title { font-size: 32px; }
-      .cards-grid { grid-template-columns: 1fr; }
-      .cta-title { font-size: 32px; }
-      .process-steps { grid-template-columns: 1fr; }
-      .footer-top { grid-template-columns: 1fr; }
-      .footer-bottom { flex-direction: column; align-items: flex-start; }
-    }
-  </style>
+  /* contact */
+  .section.contact { background: var(--accent); color: #fff; border-top: 0; }
+  .contact h2 { font-size: clamp(1.9rem, 4vw, 3rem); font-weight: 700; line-height: 1.08; max-width: 20ch; }
+  .contact p { margin-top: 1.25rem; max-width: 52ch; color: #E3EEE8; }
+  .contact .mail {
+    display: inline-block; margin-top: 2rem; color: #fff;
+    font-family: var(--display); font-weight: 600; font-size: clamp(1.25rem, 3.4vw, 2rem);
+    letter-spacing: -0.01em; overflow-wrap: anywhere;
+    text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px;
+  }
+  .contact .mail:hover { text-decoration-thickness: 3px; }
+  .contact a:focus-visible { outline-color: #fff; }
+
+  footer { padding-block: 1.75rem; font-size: .9rem; color: var(--slate); background: var(--paper); }
+  footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem 2rem; }
+
+
+  /* credentials strip */
+  .proof { display: grid; gap: 1.25rem 2.5rem; margin-top: 3.5rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); }
+  @media (min-width: 820px) { .proof { grid-template-columns: repeat(3, 1fr); } }
+  .proof p { font-size: .98rem; color: var(--slate); max-width: 32ch; }
+  .proof strong { display: block; color: var(--ink); font-weight: 600; font-size: 1.05rem; margin-bottom: .15rem; }
+
+  /* service evidence */
+  .evidence { margin-top: .9rem; padding-left: .85rem; border-left: 3px solid var(--accent); color: var(--ink); font-size: .98rem; }
+
+  /* selected work */
+  .work-intro { margin-top: 1rem; }
+  .work .row dt { font-size: 1.25rem; }
+  .work .row dd { color: var(--ink); }
+
+  /* dark section */
+  .section.dark { background: var(--ink); color: #fff; border-top: 0; }
+  .section.dark + .section { border-top: 0; }
+  .dark h2.title { color: #fff; max-width: 24ch; }
+  .dark .lede { color: #D5DEE3; margin-top: 1rem; }
+  .dark .row { border-top-color: rgba(255, 255, 255, .22); }
+  .dark .row:last-child { border-bottom-color: rgba(255, 255, 255, .22); }
+  .dark .row dt { color: #fff; }
+  .dark .row dd { color: #D5DEE3; }
+
+  /* capabilities */
+  .caps { display: grid; gap: 2.25rem 2rem; margin-top: 2.5rem; }
+  @media (min-width: 600px) { .caps { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1000px) { .caps { grid-template-columns: repeat(4, 1fr); } }
+  .caps h3 { font-size: 1.15rem; font-weight: 700; padding-bottom: .6rem; border-bottom: 2px solid var(--accent); }
+  .caps ul { list-style: none; margin: 0; padding: 0; }
+  .caps li { padding-block: .5rem; border-bottom: 1px solid var(--rule); font-size: .98rem; }
+
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+</style>
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 
-  <!-- ── Navigation ── -->
-  <nav id="navbar">
-    <div class="container">
-      <div class="nav-inner">
-        <a href="#" class="nav-logo">Cognit<span>.</span></a>
-        <ul class="nav-links" id="navLinks">
-          <li><a href="#services">Services</a></li>
-          <li><a href="#why">Why Us</a></li>
-          <li><a href="#process">Process</a></li>
-          <li><a href="#tech">Technologies</a></li>
-          <li><a href="#faq">FAQ</a></li>
-          <li><a href="#cta" class="btn btn-primary" style="padding:10px 22px;font-size:15px;">Get in Touch</a></li>
-        </ul>
-        <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu">
-          <span></span><span></span><span></span>
-        </button>
-      </div>
-    </div>
-  </nav>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Cognit Data home"><img src="data:image/png;base64,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" alt="Cognit Data Pty Ltd" width="629" height="102"></a>
+    <nav class="site-nav" aria-label="Main">
+      <a href="#services">What we do</a>
+      <a href="#work">Selected work</a>
+      <a href="#governance">Governance</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
 
-  <!-- ── Hero ── -->
-  <section id="hero">
-    <div class="container">
-      <div class="hero-content">
-        <span class="hero-tag">Data Engineering &amp; Insights</span>
-        <h1 class="hero-title">
-          Turn Raw Data Into<br />
-          <em>Real Business Value</em>
-        </h1>
-        <p class="hero-desc">
-          Cognit Data helps companies build reliable data infrastructure, unlock insights, and make faster decisions backed by trustworthy analytics.
-        </p>
-        <div class="hero-actions">
-          <a href="#cta" class="btn btn-primary">Start a Project</a>
-          <a href="#services" class="hero-link">Explore Services</a>
+<main id="main">
+  <section class="hero" id="top">
+    <div class="wrap">
+      <div>
+        <h1>We turn scattered records into figures you can stand behind.</h1>
+        <p class="lede">Cognit Data is a Sydney data engineering consultancy. We build data platforms and reporting for NSW government, councils and growing businesses, and set up private AI that keeps your records on hardware you own.</p>
+        <div class="cta-row">
+          <a class="btn" href="mailto:info@cognitdata.com.au?subject=Enquiry%20from%20cognitdata.com.au">Email us</a>
+          <a class="btn quiet" href="#work">See selected work</a>
         </div>
+      </div>
+      <div class="proof">
+        <p><strong>Databricks certified</strong>Our principal holds the Databricks Certified Data Engineer Associate credential.</p>
+        <p><strong>Built in NSW government</strong>Platforms delivered for a NSW council and a NSW state agency.</p>
+        <p><strong>Ready to procure</strong>Registered on AusTender and buy.nsw, and registered for GST.</p>
       </div>
     </div>
   </section>
 
-  <!-- ── Stats ── -->
-  <section id="stats">
-    <div class="container">
-      <div class="stats-grid">
-        <div class="stat-item">
-          <div class="stat-number">50<span>+</span></div>
-          <div class="stat-label">Clients Served</div>
+  <section class="section" id="services">
+    <div class="wrap">
+      <h2 class="title">What we do</h2>
+      <dl class="rows">
+        <div class="row">
+          <dt>Data platforms on Azure Databricks</dt>
+          <dd>We design and build lakehouse platforms with Azure Databricks, Azure Data Factory, ADLS Gen2, Delta Lake and Unity Catalog. Every table sits in a bronze, silver or gold layer with a clear owner and a clear purpose.
+            <p class="evidence">Delivered an enterprise lakehouse for a NSW council, bringing seven source systems into one governed platform.</p></dd>
         </div>
-        <div class="stat-item">
-          <div class="stat-number">200<span>+</span></div>
-          <div class="stat-label">Projects Delivered</div>
+        <div class="row">
+          <dt>Moving reports off spreadsheets and legacy SQL</dt>
+          <dd>Many reports still depend on SharePoint files and hand-maintained queries. We move them onto governed tables and re-point your Power BI models, and we check the numbers match before anyone switches over.
+            <p class="evidence">Retired legacy extraction jobs, moved a SharePoint pipeline from deprecated authentication to Entra ID and Microsoft Graph, and reconciled new tables against the manual reports they replaced.</p></dd>
         </div>
-        <div class="stat-item">
-          <div class="stat-number">5<span>+</span></div>
-          <div class="stat-label">Years of Expertise</div>
+        <div class="row">
+          <dt>KPI and operational reporting</dt>
+          <dd>Workforce, service delivery and project portfolio reporting, built with the people who own each KPI and explained in plain language so they can check the result themselves.
+            <p class="evidence">Delivered 36 workforce metrics from 18 conformed reporting tables, with monthly snapshots that show how each KPI changes over time.</p></dd>
         </div>
-        <div class="stat-item">
-          <div class="stat-number">98<span>%</span></div>
-          <div class="stat-label">Client Satisfaction</div>
+        <div class="row">
+          <dt>Private AI on hardware you own</dt>
+          <dd>We set up language models that run inside your premises, so documents and client records never leave your control. We build and test each setup on our own equipment before we recommend it.
+            <p class="evidence">In a council setting, our principal also built AI-assisted tooling that writes technical documentation and a data dictionary from catalog metadata and lineage.</p></dd>
         </div>
-      </div>
+      </dl>
     </div>
   </section>
 
-  <!-- ── Services ── -->
-  <section id="services">
-    <div class="container">
-      <div class="services-layout">
-        <div class="services-left">
-          <p class="section-tag">What We Do</p>
-          <h2 class="section-title">End-to-End Data Solutions</h2>
-          <p class="section-desc">
-            From raw ingestion to polished dashboards, we handle every layer of your data stack — so your team can focus on decisions, not pipelines.
-          </p>
-          <a href="#cta" class="btn btn-primary">Discuss Your Needs</a>
+  <section class="section work" id="work">
+    <div class="wrap">
+      <h2 class="title">Selected work</h2>
+      <p class="lede work-intro">These projects were delivered by our principal in NSW public sector roles. Client names are withheld, and referees are available on request.</p>
+      <dl class="rows">
+        <div class="row">
+          <dt>An enterprise lakehouse for a NSW council</dt>
+          <dd>Designed and delivered the council's bronze, silver and gold architecture on Azure Databricks with Unity Catalog. It brought seven source systems into one governed platform. A standard logging framework now records run status, row counts, watermarks, durations and errors for every pipeline, and a self-hosted integration runtime extends pipelines to on-premise databases.</dd>
         </div>
-        <div class="services-right">
-          <div class="accordion" id="servicesAccordion">
-
-            <div class="accordion-item open">
-              <button class="accordion-btn">
-                <span class="accordion-title">Data Engineering</span>
-                <span class="accordion-icon"></span>
-              </button>
-              <div class="accordion-body" style="max-height:300px">
-                <div class="accordion-body-inner">
-                  We design and build robust data pipelines that reliably move, transform, and deliver data across your organization. From batch ETL to real-time streaming, we architect systems that scale with your business — using tools like Apache Spark, Airflow, dbt, and cloud-native services.
-                  <a href="#cta">Learn more →</a>
-                </div>
-              </div>
-            </div>
-
-            <div class="accordion-item">
-              <button class="accordion-btn">
-                <span class="accordion-title">Cloud Data Warehousing</span>
-                <span class="accordion-icon"></span>
-              </button>
-              <div class="accordion-body">
-                <div class="accordion-body-inner">
-                  We set up and optimize modern cloud warehouses on Snowflake, BigQuery, and Databricks — ensuring your data is structured, performant, and cost-efficient. We handle schema design, partitioning, clustering, and ongoing optimization.
-                  <a href="#cta">Learn more →</a>
-                </div>
-              </div>
-            </div>
-
-            <div class="accordion-item">
-              <button class="accordion-btn">
-                <span class="accordion-title">Business Intelligence &amp; Dashboards</span>
-                <span class="accordion-icon"></span>
-              </button>
-              <div class="accordion-body">
-                <div class="accordion-body-inner">
-                  We translate complex datasets into clear, actionable dashboards your stakeholders will actually use. We work with Tableau, Power BI, Looker, and Metabase — aligning every report with your real business questions.
-                  <a href="#cta">Learn more →</a>
-                </div>
-              </div>
-            </div>
-
-            <div class="accordion-item">
-              <button class="accordion-btn">
-                <span class="accordion-title">Data Strategy &amp; Architecture</span>
-                <span class="accordion-icon"></span>
-              </button>
-              <div class="accordion-body">
-                <div class="accordion-body-inner">
-                  Not sure where to start? We audit your current data landscape, identify gaps, and craft a pragmatic roadmap — so every investment moves you toward a mature, scalable data platform rather than one-off tools.
-                  <a href="#cta">Learn more →</a>
-                </div>
-              </div>
-            </div>
-
-            <div class="accordion-item">
-              <button class="accordion-btn">
-                <span class="accordion-title">Machine Learning &amp; AI Integration</span>
-                <span class="accordion-icon"></span>
-              </button>
-              <div class="accordion-body">
-                <div class="accordion-body-inner">
-                  We help teams move from prototype to production ML — building feature stores, model pipelines, and monitoring systems that keep your models reliable long after launch. We specialize in forecasting, classification, and LLM-based solutions.
-                  <a href="#cta">Learn more →</a>
-                </div>
-              </div>
-            </div>
-
-            <div class="accordion-item">
-              <button class="accordion-btn">
-                <span class="accordion-title">Data Governance &amp; Quality</span>
-                <span class="accordion-icon"></span>
-              </button>
-              <div class="accordion-body">
-                <div class="accordion-body-inner">
-                  Bad data costs money. We implement data quality checks, lineage tracking, and governance frameworks that give you confidence in every number — using tools like Great Expectations, Monte Carlo, and custom validation layers.
-                  <a href="#cta">Learn more →</a>
-                </div>
-              </div>
-            </div>
-
-          </div>
+        <div class="row">
+          <dt>Safety, risk and audit reporting platform</dt>
+          <dd>Built end to end, from 45 Databricks notebooks and 18 API ingestion tables through a modelled reporting layer to gold views that serve Power BI.</dd>
         </div>
-      </div>
+        <div class="row">
+          <dt>Workforce KPIs from HR and learning systems</dt>
+          <dd>36 metrics covering workforce availability, mobility and profile, built on 18 conformed silver tables and reconciled against the manual source reports. History tracking and monthly snapshots show how each KPI moves. A reconciliation across HR, payroll and identity systems resolved discrepancies in organisational hierarchy and employee identity.</dd>
+        </div>
+        <div class="row">
+          <dt>Reliable data for waste collection services</dt>
+          <dd>Rebuilt the integration with a waste collection vendor's APIs as a bronze, silver and gold pipeline. It loaded years of historical data despite undocumented rate limits, and it replaced the legacy extraction jobs with a single pipeline that logs every run.</dd>
+        </div>
+        <div class="row">
+          <dt>Analytics for a state-wide financial audit</dt>
+          <dd>For a NSW state agency, designed the ETL pipeline and data model for an audit analytics solution. It processed millions of sensitive journal records and split them into secure outputs, providing auditors only the data they need. Separately built an event-driven automated testing framework on Databricks.</dd>
+        </div>
+        <div class="row">
+          <dt>A public data exchange platform</dt>
+          <dd>Helped build a NSW government data exchange platform from the ground up, from procurement and technical analysis through design.</dd>
+        </div>
+        <div class="row">
+          <dt>Automated quality checks and reporting</dt>
+          <dd>Built automated checks that cut broken links on a public data platform from over a hundred to zero, and automated a monthly security report, saving more than 10 hours of manual work each month.</dd>
+        </div>
+      </dl>
     </div>
   </section>
 
-  <!-- ── Why Us ── -->
-  <section id="why">
-    <div class="container">
-      <p class="section-tag">Why Cognit</p>
-      <h2 class="section-title">Built for Teams Who Can't Afford Data Problems</h2>
-      <p class="section-desc">We're not a generalist consultancy. We live and breathe data — every engagement is led by a senior practitioner.</p>
-      <div class="cards-grid">
-
-        <div class="card">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#C63031" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-            </svg>
-          </div>
-          <div class="card-title">Senior-Led Delivery</div>
-          <div class="card-desc">Every project is owned by an experienced data engineer or analyst — not handed off to juniors after the kickoff call.</div>
+  <section class="section dark" id="governance">
+    <div class="wrap">
+      <h2 class="title">Governance and security built into the platform</h2>
+      <p class="lede">Sensitive data needs controls that the platform enforces, not controls that depend on people remembering the rules.</p>
+      <dl class="rows">
+        <div class="row">
+          <dt>A layered access model</dt>
+          <dd>Role-based access in Unity Catalog, with a dedicated catalog and workspace-level isolation for restricted reporting.</dd>
         </div>
-
-        <div class="card">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#C63031" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
-            </svg>
-          </div>
-          <div class="card-title">Fast Time to Value</div>
-          <div class="card-desc">We move quickly from discovery to first deliverable, typically shipping working infrastructure within the first two weeks.</div>
+        <div class="row">
+          <dt>Row filters, column masks and governed tags</dt>
+          <dd>The enforcement pattern for sensitive HR and payroll data. Policy decides which rows and which columns each person can see.</dd>
         </div>
-
-        <div class="card">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#C63031" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-            </svg>
-          </div>
-          <div class="card-title">Secure &amp; Compliant</div>
-          <div class="card-desc">We follow security best practices by default — role-based access, encryption at rest, and compliance-aware architecture for regulated industries.</div>
+        <div class="row">
+          <dt>Secrets and identity</dt>
+          <dd>Managed identity and Key Vault for credentials, and Entra ID with Microsoft Graph in place of deprecated authentication methods.</dd>
         </div>
-
-        <div class="card">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#C63031" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line>
-            </svg>
-          </div>
-          <div class="card-title">Tool-Agnostic Approach</div>
-          <div class="card-desc">We recommend the right tool for the job, not whatever we happen to be partnered with. Expect honest advice over vendor lock-in.</div>
+        <div class="row">
+          <dt>Observability</dt>
+          <dd>Every pipeline run records its status, row counts, watermarks, duration and errors in one standard log.</dd>
         </div>
-
-        <div class="card">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#C63031" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line>
-            </svg>
-          </div>
-          <div class="card-title">Built to Last</div>
-          <div class="card-desc">We document everything and hand off clean, maintainable code — so your internal team can own and extend the systems we build.</div>
+        <div class="row">
+          <dt>Controlled change</dt>
+          <dd>Azure Data Factory deployed by ARM template through Azure DevOps, with environment settings and credentials kept out of the code.</dd>
         </div>
-
-        <div class="card">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#C63031" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-            </svg>
-          </div>
-          <div class="card-title">Embedded Collaboration</div>
-          <div class="card-desc">We work alongside your team in Slack, Jira, and standups — acting as a trusted extension of your organization, not a black-box vendor.</div>
-        </div>
-
-      </div>
+      </dl>
     </div>
   </section>
 
-  <!-- ── Process ── -->
-  <section id="process">
-    <div class="container">
-      <p class="section-tag">How It Works</p>
-      <h2 class="section-title">From Discovery to Deployment in Four Steps</h2>
-      <div class="process-steps">
-        <div class="step">
-          <div class="step-num">01</div>
-          <div class="step-title">Discovery &amp; Audit</div>
-          <div class="step-desc">We map your current data landscape, understand your business goals, and identify the highest-value problems to solve first.</div>
-        </div>
-        <div class="step">
-          <div class="step-num">02</div>
-          <div class="step-title">Architecture &amp; Design</div>
-          <div class="step-desc">We propose a solution architecture, select the right tools, and align on a delivery plan before writing a single line of code.</div>
-        </div>
-        <div class="step">
-          <div class="step-num">03</div>
-          <div class="step-title">Build &amp; Iterate</div>
-          <div class="step-desc">We work in short sprints, shipping working components early and often — gathering feedback to stay aligned with your goals.</div>
-        </div>
-        <div class="step">
-          <div class="step-num">04</div>
-          <div class="step-title">Handoff &amp; Support</div>
-          <div class="step-desc">We provide thorough documentation, team training, and ongoing support so your team stays fully in control after we wrap up.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── Technologies ── -->
-  <section id="tech">
-    <div class="container">
-      <div class="tech-header">
+  <section class="section" id="capabilities">
+    <div class="wrap">
+      <h2 class="title">What we work with</h2>
+      <div class="caps">
         <div>
-          <p class="section-tag">Technologies</p>
-          <h2 class="section-title" style="margin-bottom:0">The Tools We Work With</h2>
-        </div>
-        <p style="max-width:360px;color:#666;font-size:16px;line-height:1.7">
-          We stay current with the modern data stack and can work within your existing environment.
-        </p>
-      </div>
-      <div class="tech-pills">
-        <span class="tech-pill highlight">Python</span>
-        <span class="tech-pill highlight">SQL</span>
-        <span class="tech-pill highlight">dbt</span>
-        <span class="tech-pill highlight">Apache Spark</span>
-        <span class="tech-pill">Apache Airflow</span>
-        <span class="tech-pill">Prefect</span>
-        <span class="tech-pill">Kafka</span>
-        <span class="tech-pill">Snowflake</span>
-        <span class="tech-pill">BigQuery</span>
-        <span class="tech-pill">Databricks</span>
-        <span class="tech-pill">Redshift</span>
-        <span class="tech-pill">AWS</span>
-        <span class="tech-pill">Google Cloud</span>
-        <span class="tech-pill">Azure</span>
-        <span class="tech-pill">Tableau</span>
-        <span class="tech-pill">Power BI</span>
-        <span class="tech-pill">Looker</span>
-        <span class="tech-pill">Great Expectations</span>
-        <span class="tech-pill">Monte Carlo</span>
-        <span class="tech-pill">dbt Cloud</span>
-        <span class="tech-pill">Fivetran</span>
-        <span class="tech-pill">Airbyte</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── FAQ ── -->
-  <section id="faq">
-    <div class="container">
-      <div class="faq-layout">
-        <div class="faq-left">
-          <p class="section-tag">FAQ</p>
-          <h2 class="section-title">Common Questions</h2>
-          <p style="font-size:16px;color:#666;line-height:1.7;">
-            Don't see your question here? <a href="#cta" style="color:#C63031;font-weight:600;border-bottom:1px solid #C63031;">Reach out directly</a> and we'll get back to you within one business day.
-          </p>
-        </div>
-        <div class="accordion" id="faqAccordion">
-
-          <div class="accordion-item open">
-            <button class="accordion-btn">
-              <span class="accordion-title">How do engagements typically work?</span>
-              <span class="accordion-icon"></span>
-            </button>
-            <div class="accordion-body" style="max-height:300px">
-              <div class="accordion-body-inner">
-                Most engagements start with a two-week discovery sprint where we audit your current setup and agree on a roadmap. After that, we move into a delivery phase — either a fixed-scope project or an ongoing retainer depending on your needs.
-              </div>
-            </div>
-          </div>
-
-          <div class="accordion-item">
-            <button class="accordion-btn">
-              <span class="accordion-title">Do you work with startups or only large enterprises?</span>
-              <span class="accordion-icon"></span>
-            </button>
-            <div class="accordion-body">
-              <div class="accordion-body-inner">
-                Both. We work with early-stage startups that need to build their data foundation from scratch, and with growth-stage companies that need to scale or modernize an existing stack. We tailor scope and budget accordingly.
-              </div>
-            </div>
-          </div>
-
-          <div class="accordion-item">
-            <button class="accordion-btn">
-              <span class="accordion-title">Which cloud platforms do you support?</span>
-              <span class="accordion-icon"></span>
-            </button>
-            <div class="accordion-body">
-              <div class="accordion-body-inner">
-                We're cloud-agnostic and work across AWS, Google Cloud, and Azure. We'll work within your existing cloud environment and won't push you to switch providers unless there's a strong technical reason to do so.
-              </div>
-            </div>
-          </div>
-
-          <div class="accordion-item">
-            <button class="accordion-btn">
-              <span class="accordion-title">How do you handle data security and compliance?</span>
-              <span class="accordion-icon"></span>
-            </button>
-            <div class="accordion-body">
-              <div class="accordion-body-inner">
-                Security is built into our process from day one. We implement role-based access control, data masking, encryption, and audit logging as standard practices. For regulated industries (healthcare, finance), we have experience with HIPAA and SOC 2-aligned architectures.
-              </div>
-            </div>
-          </div>
-
-          <div class="accordion-item">
-            <button class="accordion-btn">
-              <span class="accordion-title">What happens after the project ends?</span>
-              <span class="accordion-icon"></span>
-            </button>
-            <div class="accordion-body">
-              <div class="accordion-body-inner">
-                We provide full documentation and a handoff session for your internal team. Many clients also stay on a lightweight retainer for ongoing support, monitoring, and iterative improvements. You'll never be left without a path forward.
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── CTA ── -->
-  <section id="cta">
-    <div class="container">
-      <h2 class="cta-title">Ready to Make Your Data Work Harder?</h2>
-      <p class="cta-desc">Tell us about your data challenges and we'll put together a tailored proposal — no obligation, no sales pressure.</p>
-      <div class="cta-actions">
-        <a href="mailto:hello@cognitdata.com" class="btn btn-primary" style="font-size:17px;padding:16px 36px;">Get a Free Consultation</a>
-        <a href="mailto:hello@cognitdata.com" class="btn btn-white" style="font-size:17px;padding:16px 36px;">hello@cognitdata.com</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── Footer ── -->
-  <footer id="footer">
-    <div class="container">
-      <div class="footer-top">
-        <div>
-          <div class="footer-brand-name">Cognit<span>.</span></div>
-          <p class="footer-brand-desc">Data engineering and analytics consulting for companies that take their data seriously.</p>
-          <a href="mailto:hello@cognitdata.com" style="font-size:15px;color:#C63031;font-weight:600;">hello@cognitdata.com</a>
-        </div>
-        <div>
-          <div class="footer-col-title">Services</div>
-          <ul class="footer-links">
-            <li><a href="#services">Data Engineering</a></li>
-            <li><a href="#services">Cloud Warehousing</a></li>
-            <li><a href="#services">Business Intelligence</a></li>
-            <li><a href="#services">Data Strategy</a></li>
-            <li><a href="#services">ML &amp; AI Integration</a></li>
-            <li><a href="#services">Data Governance</a></li>
+          <h3>Platform</h3>
+          <ul>
+            <li>Azure Databricks</li>
+            <li>Unity Catalog</li>
+            <li>Delta Lake</li>
+            <li>PySpark and Spark SQL</li>
+            <li>Medallion architecture</li>
           </ul>
         </div>
         <div>
-          <div class="footer-col-title">Company</div>
-          <ul class="footer-links">
-            <li><a href="#why">About Us</a></li>
-            <li><a href="#process">How We Work</a></li>
-            <li><a href="#tech">Technologies</a></li>
-            <li><a href="#faq">FAQ</a></li>
-            <li><a href="#cta">Contact</a></li>
+          <h3>Integration</h3>
+          <ul>
+            <li>Azure Data Factory</li>
+            <li>REST API ingestion</li>
+            <li>Self-hosted integration runtime</li>
+            <li>Microsoft Graph</li>
+            <li>Snowflake and Talend</li>
           </ul>
         </div>
         <div>
-          <div class="footer-col-title">Get Started</div>
-          <p style="font-size:15px;color:#666;line-height:1.7;margin-bottom:20px;">Have a data project in mind? We'd love to hear about it.</p>
-          <a href="#cta" class="btn btn-primary" style="font-size:15px;padding:12px 24px;">Start a Conversation</a>
+          <h3>Reporting</h3>
+          <ul>
+            <li>Power BI</li>
+            <li>Data modelling</li>
+            <li>History tracking and snapshots</li>
+            <li>KPI design and reconciliation</li>
+          </ul>
         </div>
-      </div>
-      <div class="footer-bottom">
-        <span class="footer-copy">&copy; 2026 Cognit Data. All rights reserved.</span>
-        <div class="footer-legal">
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
+        <div>
+          <h3>Delivery</h3>
+          <ul>
+            <li>Azure DevOps and ARM template deployment</li>
+            <li>Key Vault and managed identity</li>
+            <li>Automated testing</li>
+            <li>Documentation and data dictionaries</li>
+          </ul>
         </div>
       </div>
     </div>
-  </footer>
+  </section>
 
-  <script>
-    // Sticky nav shadow
-    window.addEventListener('scroll', () => {
-      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 10);
-    });
+  <section class="section">
+    <div class="wrap">
+      <h2 class="title">Who we work with</h2>
+      <div class="audiences">
+        <div class="audience">
+          <h3>Government and councils</h3>
+          <p>Teams that report to executives, auditors and the public, and need figures that hold up when someone asks where they came from.</p>
+        </div>
+        <div class="audience">
+          <h3>Growing businesses</h3>
+          <p>Owners who have outgrown spreadsheets and want one trustworthy set of numbers, without hiring a full data team.</p>
+        </div>
+        <div class="audience">
+          <h3>Firms with confidential records</h3>
+          <p>Accountants, clinics and other professional practices that want the benefit of AI without sending client files to an outside service.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    // Hamburger menu
-    document.getElementById('hamburger').addEventListener('click', () => {
-      document.getElementById('navLinks').classList.toggle('open');
-    });
+  <section class="section" id="how">
+    <div class="wrap">
+      <h2 class="title">How an engagement runs</h2>
+      <ol class="steps">
+        <li>
+          <h3>Agree the questions</h3>
+          <p>We start with the decisions your reports must support and who owns each number, before any code is written.</p>
+        </li>
+        <li>
+          <h3>Ingest from your sources</h3>
+          <p>We connect to your systems, APIs, files and databases and load their data on a schedule. It is stored in open, industry-standard formats on Azure storage, and every load is logged, so you can always trace a figure back to what arrived.</p>
+        </li>
+        <li>
+          <h3>Transform and model</h3>
+          <p>Silver tables fix dates, duplicates and names, and we check them against the source and any existing reports. Gold tables hold the figures you report, modelled for your reporting tool, with history kept where you need to see change over time. Every business rule is written down, so anyone can see how a figure is produced.</p>
+        </li>
+        <li>
+          <h3>Hand over</h3>
+          <p>You get documentation, a monitored schedule and a walkthrough, so your team can run it without us.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
 
-    // Accordion
-    function initAccordion(id) {
-      const items = document.querySelectorAll(`#${id} .accordion-item`);
-      items.forEach(item => {
-        item.querySelector('.accordion-btn').addEventListener('click', () => {
-          const isOpen = item.classList.contains('open');
-          // Close all
-          items.forEach(i => {
-            i.classList.remove('open');
-            i.querySelector('.accordion-body').style.maxHeight = '0';
-          });
-          // Open clicked if it was closed
-          if (!isOpen) {
-            item.classList.add('open');
-            const body = item.querySelector('.accordion-body');
-            body.style.maxHeight = body.scrollHeight + 'px';
-          }
-        });
-      });
-    }
+  <section class="section" id="about">
+    <div class="wrap">
+      <h2 class="title">About Cognit Data</h2>
+      <dl class="facts about-facts">
+          <div><dt>Company</dt><dd>Cognit Data Pty Ltd</dd></div>
+          <div><dt>ABN</dt><dd>64 600 260 688</dd></div>
+          <div><dt>GST</dt><dd>Registered</dd></div>
+          <div><dt>Location</dt><dd>Sydney, NSW</dd></div>
+          <div><dt>Credential</dt><dd>Databricks Certified Data Engineer Associate, March 2026</dd></div>
+          <div><dt>Procurement</dt><dd>Registered on AusTender and buy.nsw</dd></div>
+        </dl>
+    </div>
+  </section>
 
-    initAccordion('servicesAccordion');
-    initAccordion('faqAccordion');
-  </script>
+  <section class="section contact" id="contact">
+    <div class="wrap">
+      <h2>Tell us what you need to measure, move or keep private.</h2>
+      <p>Send a few lines about your data and what you want to be able to answer. We reply by email with questions or a suggested first step.</p>
+      <a class="mail" href="mailto:info@cognitdata.com.au?subject=Enquiry%20from%20cognitdata.com.au">info@cognitdata.com.au</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>&copy; 2026 Cognit Data Pty Ltd. ABN 64 600 260 688.</span>
+    <span>Sydney, New South Wales</span>
+  </div>
+</footer>
+
 </body>
 </html>
